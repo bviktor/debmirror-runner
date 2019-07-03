@@ -1,0 +1,4 @@
+DM_HOST='ports.ubuntu.com'
+DM_ROOT='ubuntu-ports'
+DM_SECTION='main,restricted,universe,multiverse'
+DM_ARCH='arm64'

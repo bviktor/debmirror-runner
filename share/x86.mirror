@@ -1,0 +1,4 @@
+DM_HOST='archive.ubuntu.com'
+DM_ROOT='ubuntu'
+DM_SECTION='main,restricted,universe,multiverse,main/debian-installer'
+DM_ARCH='i386,amd64'

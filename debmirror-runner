@@ -1,0 +1,101 @@
+#!/bin/bash
+
+set -eu
+
+DM_DIR='/var/www/html'
+CONF_DIR='/usr/local/etc/debmirror'
+
+function find_mirrors
+{
+    my_mirrors=()
+    shopt -s nullglob
+    for f in ${CONF_DIR}/*.mirror
+    do
+        my_mirrors+=( "$(basename $f | awk -F'.' '{print $1}')" )
+    done
+
+    if [ ${#my_mirrors[@]} -eq 0 ]
+    then
+        echo 'Error! No mirror files in /usr/local/etc/debmirror!'
+        exit 1
+    fi
+}
+
+function ask_mirror
+{
+    valid_mirror=0
+    PS3='Please select mirror: '
+
+    select opt in "${my_mirrors[@]}"
+    do
+        for element in "${my_mirrors[@]}"
+        do
+            if [ "${element}" = "${opt}" ]
+            then
+                valid_mirror=1
+                mirror="${element}"
+                break
+            fi
+        done
+
+        if [ ${valid_mirror} -eq 1 ]
+        then
+            break
+        else
+            echo "Invalid choice! Please try again."
+        fi
+    done
+}
+
+function check_given_mirror
+{
+    valid_mirror=0
+
+    for element in "${my_mirrors[@]}"
+    do
+        if [ "${element}" = "$1" ]
+        then
+            valid_mirror=1
+            mirror="${element}"
+            break
+        fi
+    done
+
+    if [ ${valid_mirror} -ne 1 ]
+    then
+        echo "Invalid mirror specified! Please select from the list below:"
+        ask_mirror
+    fi
+}
+
+function run_debmirror
+{
+    /bin/debmirror \
+    --config-file=/etc/debmirror.conf \
+    --host=${DM_HOST} \
+    --root=${DM_ROOT} \
+    --section=${DM_SECTION} \
+    --arch=${DM_ARCH} \
+    ${DM_DIR}/${DM_ROOT} \
+    --progress
+}
+
+function fix_permissions
+{
+    chown -R nginx.nginx ${DM_DIR}
+    restorecon -r ${DM_DIR}
+}
+
+find_mirrors
+
+if [ $# -eq 1 ]
+then
+    check_given_mirror $@
+else
+    ask_mirror
+fi
+
+. "${CONF_DIR}/${mirror}.mirror"
+
+run_debmirror
+fix_permissions
