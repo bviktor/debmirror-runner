@@ -82,8 +82,8 @@ function run_debmirror
 
 function fix_permissions
 {
-    chown -R nginx.nginx ${DM_DIR}
-    restorecon -r ${DM_DIR}
+    /bin/chown -R nginx.nginx ${DM_DIR}
+    /sbin/restorecon -r ${DM_DIR}
 }
 
 find_mirrors
