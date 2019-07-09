@@ -1,0 +1,2 @@
+0 5 * * * root /usr/local/bin/debmirror-runner "x86" &>> /var/log/debmirror
+0 6 * * * root /usr/local/bin/debmirror-runner "arm64" &>> /var/log/debmirror
