@@ -16,7 +16,7 @@ function find_mirrors
 
     if [ ${#my_mirrors[@]} -eq 0 ]
     then
-        echo 'Error! No mirror files in /usr/local/etc/debmirror!'
+        echo "Error! No mirror files in ${CONF_DIR}!"
         exit 1
     fi
 }
